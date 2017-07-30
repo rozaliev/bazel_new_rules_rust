@@ -1,0 +1,2 @@
+RustLibrary = provider()
+RustBinary = provider()

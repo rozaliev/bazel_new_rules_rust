@@ -1,0 +1,7 @@
+/.vscode
+/bazel-bin
+/bazel-genfiles
+/bazel-new_rules_rust
+/bazel-out
+/bazel-testlogs
+/.dazel_run
