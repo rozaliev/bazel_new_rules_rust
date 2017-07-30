@@ -5,8 +5,8 @@ _label_prefix = "@new_rules_rust//rust/toolchain:"
 
 def _generate_toolchains():
     # os
-    os_linux = struct(name="linux", constraint = "@bazel_tools//platforms:linux")
-    os_darwin = struct(name="darwin", constraint = "@bazel_tools//platforms:osx")
+    os_linux = struct(name="linux", constraint = "@bazel_tools//platforms:linux", dylib_ext = ".so")
+    os_darwin = struct(name="darwin", constraint = "@bazel_tools//platforms:osx", dylib_ext = ".dylib")
     
     # arch
     arch_amd64 = struct(name="x86_64", constraint = "@bazel_tools//platforms:x86_64")
@@ -50,6 +50,8 @@ def _generate_toolchains():
                 rustc = distribution + "//:rustc",
                 rustc_lib = distribution + "//:rustc_lib_" + target.arch.name + "_" + target.os.name,
                 rust_lib = distribution + "//:rust_lib_" + target.arch.name + "_" + target.os.name,
+                
+                dylib_ext = host.os.dylib_ext,
             )
             
 
@@ -70,7 +72,8 @@ def declare_toolchains():
             name = toolchain["impl"],
             rustc = toolchain["rustc"],
             rustc_lib = toolchain["rustc_lib"],
-            rust_lib = toolchain["rust_lib"]               
+            rust_lib = toolchain["rust_lib"],               
+            dylib_ext = toolchain["dylib_ext"],
         )
         native.toolchain(
             name = toolchain["name"],

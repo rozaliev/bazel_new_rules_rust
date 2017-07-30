@@ -18,6 +18,7 @@ def _rust_toolchain_impl(ctx):
       rust_lib = ctx.files.rust_lib,
 
       crosstool = ctx.files.crosstool,
+      dylib_ext = ctx.attr.dylib_ext,
   )]
 
 rust_toolchain_core_attrs = {
@@ -25,6 +26,7 @@ rust_toolchain_core_attrs = {
     "rustc_lib": attr.label(mandatory = True, allow_files = True),
     "rust_lib": attr.label(mandatory = True, allow_files = True),
 
+    "dylib_ext": attr.string(mandatory = True),
 }
 
 rust_toolchain_attrs = rust_toolchain_core_attrs + {

@@ -1,14 +1,26 @@
 load("@new_rules_rust//rust/private:common.bzl", "rust_filetype")
-load("@new_rules_rust//rust/private:rust_toolchain.bzl", "TOOLCHAIN_TYPE")
+load("@new_rules_rust//rust/private:rust_toolchain.bzl", "TOOLCHAIN_TYPE", "get_rust_toolchain")
 load("@new_rules_rust//rust/private:providers.bzl", "RustLibrary")
 load("@new_rules_rust//rust/private:compile.bzl", "emit_rust_compile_actions", "find_crate_root")
 
 
-def _rust_library_impl(ctx):
-    out_object = ctx.new_file("lib" + ctx.label.name + ".rlib")
-    
+def _rust_library_impl(ctx):   
     crate_name = ctx.attr.name
-    crate_type = "lib"
+    crate_type = ctx.attr.crate_type
+
+    toolchain = get_rust_toolchain(ctx)
+    
+    out_object_name = ""
+    if crate_type == "lib":
+        out_object_name = "lib" + ctx.label.name + ".rlib"
+    elif crate_type == "proc-macro":
+        out_object_name = "lib" + ctx.label.name + toolchain.dylib_ext
+    else:
+        fail("unsupported crate_type: %s" % crate_type)
+
+    
+
+    out_object = ctx.new_file(out_object_name)
 
     transitive_rust_library_deps = depset()
 
@@ -47,6 +59,7 @@ rust_library = rule(
     attrs = {
         "srcs": attr.label_list(allow_files = rust_filetype),
         "deps": attr.label_list(providers = [RustLibrary]),
+        "crate_type": attr.string(default = "lib")
     },
     fragments = ["cpp"],
     toolchains = [TOOLCHAIN_TYPE],
